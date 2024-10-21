@@ -1,0 +1,5 @@
+subprocess
+msgspec
+asyncio
+ping3
+vkbottle
