@@ -201,4 +201,5 @@ if __name__ == "__main__":
     for custom_labeler in labelers:
         bot.labeler.load(custom_labeler)
 
+    logger.info("Starting bot")
     bot.run_forever()

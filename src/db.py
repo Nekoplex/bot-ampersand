@@ -6,7 +6,7 @@ USERS_TABLE_SQL = """CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     drink INTEGER,
     last_request_date INTEGER
-)"""
+);"""
 
 
 async def create_tables() -> None:
