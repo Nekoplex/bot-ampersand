@@ -1,5 +1,5 @@
-subprocess
-msgspec
+aiosqlite
 asyncio
-ping3
+msgspec
+subprocess
 vkbottle
