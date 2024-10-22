@@ -1,5 +1,6 @@
-subprocess
-msgspec
+aiosqlite
 asyncio
-ping3
+msgspec
+python-dotenv
+subprocess
 vkbottle
