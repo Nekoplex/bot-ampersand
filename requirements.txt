@@ -1,5 +1,6 @@
 aiosqlite
 asyncio
 msgspec
+python-dotenv
 subprocess
 vkbottle
