@@ -3,4 +3,5 @@ asyncio
 msgspec
 python-dotenv
 simpleeval
-vkbottle
+vkbottle @ git+https://github.com/vkbottle/vkbottle.git@dev
+loguru
