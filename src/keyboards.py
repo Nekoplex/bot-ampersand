@@ -4,18 +4,18 @@ from vkbottle import Text
 
 MAIN_KBD = (
     Keyboard()
-    .add(Text("пить"), color=Color.NEGATIVE)
-    .add(Text("пить топ"), color=Color.NEGATIVE)
-    .add(Text("юникс тайм"), color=Color.NEGATIVE)
+    .add(Text("пить", payload={"cmd": "drink"}), color=Color.NEGATIVE)
+    .add(Text("пить топ", payload={"cmd": "drink_top"}), color=Color.NEGATIVE)
+    .add(Text("юникс тайм", payload={"cmd": "unix_time"}), color=Color.NEGATIVE)
     .row()
-    .add(Text("помощь"), color=Color.NEGATIVE)
+    .add(Text("помощь", payload={"cmd": "drink_help"}), color=Color.NEGATIVE)
     .row()
-    .add(Text("убрать клаву"), color=Color.POSITIVE)
+    .add(Text("убрать клаву", payload={"cmd": "remove_kbd"}), color=Color.POSITIVE)
 ).get_json()
 
 FORMAT_KBD = (
     Keyboard(inline=True)
-    .add(Text("Отформатированный"), color=Color.NEGATIVE)
+    .add(Text("Отформатированный", payload={"cmd": "unix_time_formatted"}), color=Color.NEGATIVE)
     .row()
-    .add(Text("Не форматированный"), color=Color.POSITIVE)
+    .add(Text("Не форматированный", payload={"cmd": "unix_time_unformatted"}), color=Color.POSITIVE)
 )
