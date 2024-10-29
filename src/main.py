@@ -7,7 +7,7 @@ from loguru import logger
 from vkbottle import API, EMPTY_KEYBOARD
 from vkbottle.bot import Bot, Message
 from vkbottle.dispatch.rules.base import CommandRule, FromUserRule
-
+import asyncio
 from config import CLUBPREF, TOKEN
 from db import (
     create_tables,
@@ -83,18 +83,18 @@ async def handle_top_command(api: API) -> str:
 #
 
 
-@bot.on.message(text=(",клава", "[club224599461|@ampersand_bot] клава"))
+@bot.on.message(text=(",клава", f"{CLUBPREF} клава"))
 async def kbd_handler(message: Message):
     await message.answer("клава успешно подключена", keyboard=MAIN_KBD)
 
 
-@bot.on.message(text=(",убрать клаву", "[club224599461|@ampersand_bot] убрать клаву"))
+@bot.on.message(text=(",убрать клаву", f"{CLUBPREF} убрать клаву"))
 @bot.on.message(payload={"cmd": "remove_kbd"})
 async def remove_kbd_handler(message: Message):
     await message.answer("клава была успешно отключена", keyboard=EMPTY_KEYBOARD)
 
 
-@bot.on.message(text=(",пить", "[club224599461|@ampersand_bot] пить"))
+@bot.on.message(text=(",пить", f"{CLUBPREF} пить"))
 @bot.on.message(payload={"cmd": "drink"})
 async def drink_handler(message: Message):
     if message.from_id < 1:
@@ -117,8 +117,8 @@ async def drink_count_handler(message: Message):
 async def top_handler(message: Message):
     response = await handle_top_command(message.ctx_api)
     await message.answer(response, disable_mentions=True)
-    await message.answer(sticker_id=58261)
-
+    await message.answer(sticker_id=65653)
+#TODO : DELETE STICKERS
 
 @bot.on.message(CommandRule("пить инфо", [","], 0))
 @bot.on.message(payload={"cmd": "drink_info"})
@@ -138,7 +138,7 @@ async def kok_help_handler(_: Message):
     return "команды модуля пить:\nпить, пить инфо,\nпить топ, пить кружка"
 
 
-@bot.on.message(text=(",юникс тайм", "[club224599461|@ampersand_bot] юникс тайм"))
+@bot.on.message(text=(",юникс тайм", f"{CLUBPREF} юникс тайм"))
 @bot.on.message(payload={"cmd": "unix_time"})
 async def unix_time_handler(message: Message):
     await message.answer("Какой вид юникс тайма вы хотите вывести?", keyboard=FORMAT_KBD)
@@ -157,7 +157,7 @@ async def time_format_handler(message: Message):
 async def time_nonformat_handler(message: Message):
     nf_time = str(int(time.time()))
     await message.answer(f"Текущее неоотформатированное юникс время : {nf_time}")
-    # TODO: Sticker below is not available (error 100)
+    # Sticker below is not available (error 100) - its cuz you don't have stickerpack
     # await message.answer(sticker_id=3130)
 
 
@@ -183,7 +183,7 @@ async def help_multitool_handler(_: Message):
     )
 
 
-@bot.on.message(text=(",помощь", "[club224599461|@ampersand_bot] помощь"))
+@bot.on.message(text=(",помощь", f"{CLUBPREF} помощь"))
 async def help_handler(_: Message):
     return (
         "помощь бота амперсанд[&]"
@@ -201,7 +201,7 @@ async def no_internet_error_handler(e: ClientConnectorError):
     The entire bot waits 15 seconds if there's no internet.
     """
     logger.warning(f"No internet connection: {e}")
-    time.sleep(15)  # ? Should this be replaced with asyncio.sleep()?
+    asyncio.sleep(15)  # ? Should this be replaced with asyncio.sleep()?
 
 
 if __name__ == "__main__":
