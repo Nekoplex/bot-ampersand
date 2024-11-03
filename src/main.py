@@ -1,9 +1,13 @@
+#custom imports
 import random
 import time
 from datetime import datetime
 
 from aiohttp.client_exceptions import ClientConnectorError
+#logger imports, in code it's usage is marked as #logging levels set... 
+import sys
 from loguru import logger
+#main imports
 from vkbottle import API, EMPTY_KEYBOARD
 from vkbottle.bot import Bot, Message
 from vkbottle.dispatch.rules.base import CommandRule, FromUserRule
@@ -201,7 +205,10 @@ async def no_internet_error_handler(e: ClientConnectorError):
     The entire bot waits 15 seconds if there's no internet.
     """
     logger.warning(f"No internet connection: {e}")
-    asyncio.sleep(15)  # ? Should this be replaced with asyncio.sleep()?
+    time.sleep(15)  
+    # ^^^^ 
+    #blocking non-async function, 
+    #if it's async, then it'll spam in console
 
 
 if __name__ == "__main__":
@@ -209,6 +216,11 @@ if __name__ == "__main__":
 
     for custom_labeler in labelers:
         bot.labeler.load(custom_labeler)
-
-    logger.info("Starting bot")
+    
+    #logging levels set, to keep console clean
+    logger.remove()
+    logger.add(sys.stderr, level="INFO")
+    
+    #starting bot
+    logger.info("Starting bot ampersand")
     bot.run_forever()
