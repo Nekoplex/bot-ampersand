@@ -61,7 +61,7 @@ async def status_handler(message: Message):
     python_ver = get_python_ver()
 
     msg = (
-        f"Версия ЯП: {python_ver}"
+        f"Версия Python: {python_ver}"
         f"\nПинг: {ping_ms}"
     )
 

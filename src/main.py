@@ -2,7 +2,6 @@
 import random
 import time
 from datetime import datetime
-
 from aiohttp.client_exceptions import ClientConnectorError
 #logger imports, in code it's usage is marked as #logging levels set... 
 import sys
