@@ -11,14 +11,14 @@ from loguru import logger
 from vkbottle import API, EMPTY_KEYBOARD
 from vkbottle.bot import Bot, Message
 from vkbottle.dispatch.rules.base import CommandRule, FromUserRule
-import asyncio
+
 from config import CLUBPREF, TOKEN
 from db import (
     create_tables,
     create_user,
     get_user,
-    top_drink_users,
-    update_drink_status
+    top_sailed_users,
+    update_sailed_status
 )
 from keyboards import FORMAT_KBD, MAIN_KBD
 from tools import labelers
@@ -28,25 +28,25 @@ bot.labeler.vbml_ignore_case = True
 bot.labeler.auto_rules = [FromUserRule()]
 
 
-async def handle_drink_command(user_id: int) -> str:
+async def handle_sailed_command(user_id: int) -> str:
     """
-    Handles "пить" command.
+    Handles "плыть" command.
     """
     current_date = int(time.time())
     user = await get_user(user_id)
 
-    drink: int = random.randint(200, 2000)
-    total_drink = drink
+    sailed: int = random.randint(1, 100)
+    total_sailed = sailed
     if user:
         if datetime.fromtimestamp(user[2]).date() == datetime.now().date():
-            return "Вы уже использовали команду 'пить' сегодня."
+            return "Вы уже использовали команду 'плыть' сегодня."
 
-        await update_drink_status(user_id, drink, current_date)
-        total_drink += user[1]
+        await update_sailed_status(user_id, sailed, current_date)
+        total_sailed += user[1]
     else:
-        await create_user(user_id, drink, current_date)
+        await create_user(user_id, sailed, current_date)
 
-    return f"Вы выпили {drink} мл спермы. Всего вы выпили : {total_drink} мл спермы."
+    return f"Вы проплыли {sailed} сантиметров. Всего вы проплыли : {total_sailed} см."
 
 
 async def handle_count_command(user_id: int) -> str:
@@ -55,18 +55,18 @@ async def handle_count_command(user_id: int) -> str:
     """
     user = await get_user(user_id)
     if not user:
-        return "Вы еще не использовали команду 'пить'."
+        return "Вы еще ни разу не плыли."
 
-    return f"Всего вы выпили: {user[1]} мл."
+    return f"Всего вы проплыли: {user[1]} см."
 
 
 async def handle_top_command(api: API) -> str:
     """
-    Handles "пить топ" command.
+    Handles "плыть топ" command.
     """
 
     # Sort users by their ml in descending order
-    top_users = await top_drink_users()
+    top_users = await top_sailed_users()
     top_users = top_users[:10]
 
     # Getting users' full names
@@ -74,10 +74,10 @@ async def handle_top_command(api: API) -> str:
     user_names = await api.users.get(user_ids=user_ids)
 
     # Creating response
-    response = "общий топ пользователей:\n"
+    response = "общий топ регаты:\n"
     for i, user in enumerate(top_users, 1):
         user_name = f"[id{user[0]}|{user_names[i - 1].first_name} {user_names[i - 1].last_name}]"
-        response += f"{i}. {user_name}: {user[1]} мл\n"
+        response += f"{i}. {user_name}: {user[1]} см\n"
 
     return response
 
@@ -98,48 +98,49 @@ async def remove_kbd_handler(message: Message):
     await message.answer("клава была успешно отключена", keyboard=EMPTY_KEYBOARD)
 
 
-@bot.on.message(text=(",пить", f"{CLUBPREF} пить"))
-@bot.on.message(payload={"cmd": "drink"})
-async def drink_handler(message: Message):
+@bot.on.message(text=(",плыть", f"{CLUBPREF} плыть"))
+@bot.on.message(payload={"cmd": "sailed"})
+async def sailed_handler(message: Message):
     if message.from_id < 1:
         # Bots not allowed!
         return
 
-    response = await handle_drink_command(message.from_id)
+    response = await handle_sailed_command(message.from_id)
     await message.answer(response)
     await message.answer(sticker_id=58258)
 
 
-@bot.on.message(CommandRule("пить кружка", [","], 0))
-async def drink_count_handler(message: Message):
+@bot.on.message(CommandRule("плыть статы", [","], 0))
+async def sailed_count_handler(message: Message):
     response = await handle_count_command(message.from_id)
     await message.answer(response)
 
 
-@bot.on.message(CommandRule("пить топ", [",", f"{CLUBPREF} "], 0))
-@bot.on.message(payload={"cmd": "drink_top"})
+@bot.on.message(CommandRule("топ регаты", [",", f"{CLUBPREF} "], 0))
+@bot.on.message(payload={"cmd": "sailed_top"})
 async def top_handler(message: Message):
     response = await handle_top_command(message.ctx_api)
     await message.answer(response, disable_mentions=True)
     await message.answer(sticker_id=65653)
-#TODO : DELETE STICKERS
+    #TODO : DELETE STICKERS
 
-@bot.on.message(CommandRule("пить инфо", [","], 0))
-@bot.on.message(payload={"cmd": "drink_info"})
+@bot.on.message(CommandRule("плыть инфо", [","], 0))
+@bot.on.message(payload={"cmd": "sailed_info"})
 async def kok_info_handler(_: Message):
     return (
-        "Модуль пить в боте ampersand"
-        "\nver.1.0.0, stable"
-        "\nDerfikop❤️,"
-        "\nF1zzTao❤️"
-        "\nampersand gang 4ever🔫"
+        "Модуль плыть в боте ampersand"
+        "\nver.1.0.2, UNstable"
+        "\nrecreated from drink sim!!"
+        "\nDerfikop❤️Rip(((,"
+        "\n@F1zzTao❤️Alive :)"
+        "\n&[?]"
     )
 
 
-@bot.on.message(CommandRule("помощь пить", [","], 0))
-@bot.on.message(payload={"cmd": "drink_help"})
+@bot.on.message(CommandRule("помощь плыть", [","], 0))
+@bot.on.message(payload={"cmd": "sailed_help"})
 async def kok_help_handler(_: Message):
-    return "команды модуля пить:\nпить, пить инфо,\nпить топ, пить кружка"
+    return "команды модуля плыть:\nплыть, плыть инфо,\nтоп регаты, плыть статы"
 
 
 @bot.on.message(text=(",юникс тайм", f"{CLUBPREF} юникс тайм"))
@@ -148,7 +149,7 @@ async def unix_time_handler(message: Message):
     await message.answer("Какой вид юникс тайма вы хотите вывести?", keyboard=FORMAT_KBD)
 
 
-@bot.on.message(text=(f"{CLUBPREF} Отформатированный"))
+@bot.on.message(text=(f"{CLUBPREF} Отформаченный"))
 @bot.on.message(payload={"cmd": "unix_time_formatted"})
 async def time_format_handler(message: Message):
     f_time = time.strftime("%X %x %Z")
@@ -156,12 +157,13 @@ async def time_format_handler(message: Message):
     await message.answer(sticker_id=3130)
 
 
-@bot.on.message(text=(f"{CLUBPREF} Не форматированный"))
+@bot.on.message(text=(f"{CLUBPREF} Не формаченный"))
 @bot.on.message(payload={"cmd": "unix_time_unformatted"})
 async def time_nonformat_handler(message: Message):
     nf_time = str(int(time.time()))
-    await message.answer(f"Текущее неоотформатированное юникс время : {nf_time}")
-    # Sticker below is not available (error 100) - its cuz you don't have stickerpack
+    await message.answer(f"Текущее неоотформаченное юникс время : {nf_time}")
+    # Sticker below is not available (error 100) 
+    # -- its cuz you don't have stickerpack
     # await message.answer(sticker_id=3130)
 
 
@@ -169,7 +171,7 @@ async def time_nonformat_handler(message: Message):
 async def help_misc_handler(_: Message):
     return (
         "АКА модуль мультутул,"
-        "\nперечень команд модуля 'другое':"
+        "\nсписок команд модуля 'другое':"
         "\n•юникс тайм"
         "\n•клава"
         "\n•калькулятор 🤔"
@@ -190,10 +192,10 @@ async def help_multitool_handler(_: Message):
 @bot.on.message(text=(",помощь", f"{CLUBPREF} помощь"))
 async def help_handler(_: Message):
     return (
-        "помощь бота амперсанд[&]"
-        "\nпиши ,помощь <имя_модуля> чтобы узнать о модуле подробнее!"
+        "помощь амперсанда[&]"
+        "\nпиши ,помощь [имя_модуля] чтобы узнать о модуле всё!"
         "\nдоступные модули:"
-        "\n•пить"
+        "\n•плыть - МОДУЛЬ НЕСТАБИЛЕН"
         "\n•другое(мультитул)"
     )
 
@@ -222,5 +224,5 @@ if __name__ == "__main__":
     logger.add(sys.stderr, level="INFO")
     
     #starting bot
-    logger.info("Starting bot ampersand")
+    logger.info("Starting [&] bot")
     bot.run_forever()
