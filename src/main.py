@@ -33,8 +33,21 @@ async def handle_sailed_command(user_id: int) -> str:
     """
     current_date = int(time.time())
     user = await get_user(user_id)
-
-    sailed: int = random.randint(1, 100)
+    chance_seed = 0.3
+    chance_seed2 = 0.5
+    chance_throw = float("%.2f" % random.random())
+    if chance_throw <= chance_seed:
+        print(chance_throw)
+        sailed: int = random.randint(70, 130)
+        throw_message = "С шансом в 30% вы проплыли больше."
+    elif chance_throw >= chance_seed and chance_throw <= chance_seed2:
+        print(chance_throw)
+        sailed: int = random.randint(1, 49)
+        throw_message = "С шансом в 20% вы проплыли меньше."
+    elif chance_throw > chance_seed2:
+        print(chance_throw)
+        sailed: int = random.randint(50, 70)
+        throw_message = "С шансом в 50% вы проплыли нормальное расстояние."
     total_sailed = sailed
     if user:
         if datetime.fromtimestamp(user[2]).date() == datetime.now().date():
@@ -45,12 +58,12 @@ async def handle_sailed_command(user_id: int) -> str:
     else:
         await create_user(user_id, sailed, current_date)
 
-    return f"Вы проплыли {sailed} сантиметров. Всего вы проплыли : {total_sailed} см."
+    return f"Вы проплыли {sailed} сантиметров.{throw_message} Всего вы проплыли : {total_sailed} см."
 
 
 async def handle_count_command(user_id: int) -> str:
     """
-    Handles "размер моя кружка" command.
+    Handles ",плыть статы" command.
     """
     user = await get_user(user_id)
     if not user:
@@ -86,18 +99,18 @@ async def handle_top_command(api: API) -> str:
 #
 
 
-@bot.on.message(text=(",клава", f"{CLUBPREF} клава"))
+@bot.on.message(CommandRule("клава", [",", f"{CLUBPREF} "], 0))
 async def kbd_handler(message: Message):
     await message.answer("клава успешно подключена", keyboard=MAIN_KBD)
 
 
-@bot.on.message(text=(",убрать клаву", f"{CLUBPREF} убрать клаву"))
+@bot.on.message(CommandRule(",убрать клаву", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "remove_kbd"})
 async def remove_kbd_handler(message: Message):
     await message.answer("клава была успешно отключена", keyboard=EMPTY_KEYBOARD)
 
 
-@bot.on.message(text=(",плыть", f"{CLUBPREF} плыть"))
+@bot.on.message(CommandRule(",плыть", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "sailed"})
 async def sailed_handler(message: Message):
     if message.from_id < 1:
@@ -106,10 +119,9 @@ async def sailed_handler(message: Message):
 
     response = await handle_sailed_command(message.from_id)
     await message.answer(response)
-    await message.answer(sticker_id=58258)
 
 
-@bot.on.message(CommandRule("плыть статы", [","], 0))
+@bot.on.message(CommandRule("плыть статы", [",", f"{CLUBPREF} "], 0))
 async def sailed_count_handler(message: Message):
     response = await handle_count_command(message.from_id)
     await message.answer(response)
@@ -120,15 +132,13 @@ async def sailed_count_handler(message: Message):
 async def top_handler(message: Message):
     response = await handle_top_command(message.ctx_api)
     await message.answer(response, disable_mentions=True)
-    await message.answer(sticker_id=65653)
-    #TODO : DELETE STICKERS
 
-@bot.on.message(CommandRule("плыть инфо", [","], 0))
+@bot.on.message(CommandRule("плыть инфо", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "sailed_info"})
 async def kok_info_handler(_: Message):
     return (
         "Модуль плыть в боте ampersand"
-        "\nver.1.0.2, UNstable"
+        "\nver.1.0.3, UNstable"
         "\nrecreated from drink sim!!"
         "\nDerfikop❤️Rip(((,"
         "\n@F1zzTao❤️Alive :)"
@@ -136,13 +146,13 @@ async def kok_info_handler(_: Message):
     )
 
 
-@bot.on.message(CommandRule("помощь плыть", [","], 0))
+@bot.on.message(CommandRule("помощь плыть", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "sailed_help"})
 async def kok_help_handler(_: Message):
     return "команды модуля плыть:\nплыть, плыть инфо,\nтоп регаты, плыть статы"
 
 
-@bot.on.message(text=(",юникс тайм", f"{CLUBPREF} юникс тайм"))
+@bot.on.message(CommandRule("юникс тайм", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "unix_time"})
 async def unix_time_handler(message: Message):
     await message.answer("Какой вид юникс тайма вы хотите вывести?", keyboard=FORMAT_KBD)
@@ -153,7 +163,6 @@ async def unix_time_handler(message: Message):
 async def time_format_handler(message: Message):
     f_time = time.strftime("%X %x %Z")
     await message.answer(f"Текущее отформатированное юникс время :\n{f_time}")
-    await message.answer(sticker_id=3130)
 
 
 @bot.on.message(text=(f"{CLUBPREF} Не формаченный"))
@@ -161,9 +170,7 @@ async def time_format_handler(message: Message):
 async def time_nonformat_handler(message: Message):
     nf_time = str(int(time.time()))
     await message.answer(f"Текущее неоотформаченное юникс время : {nf_time}")
-    # Sticker below is not available (error 100) 
-    # -- its cuz you don't have stickerpack
-    # await message.answer(sticker_id=3130)
+    
 
 
 @bot.on.message(CommandRule("помощь другое", [","], 0))
@@ -177,14 +184,14 @@ async def help_misc_handler(_: Message):
     )
 
 
-@bot.on.message(CommandRule("помощь мультитул", [","], 0))
+@bot.on.message(CommandRule("помощь инструменты", [","], 0))
 async def help_multitool_handler(_: Message):
     return (
         "модуль мультутул,"
-        "\nперечень команд модуля 'мультитул':"
+        "\nперечень команд модуля 'инструменты':"
         "\n•юникс тайм"
         "\n•клава"
-        "\n•калькулятор 🤔"
+        "\n•калькулятор(говно)"
     )
 
 
@@ -195,7 +202,7 @@ async def help_handler(_: Message):
         "\nпиши ,помощь [имя_модуля] чтобы узнать о модуле всё!"
         "\nдоступные модули:"
         "\n•плыть - МОДУЛЬ НЕСТАБИЛЕН"
-        "\n•другое(мультитул)"
+        "\n•другое(инструменты)"
     )
 
 
