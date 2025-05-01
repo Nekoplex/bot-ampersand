@@ -110,7 +110,7 @@ async def remove_kbd_handler(message: Message):
     await message.answer("клава была успешно отключена", keyboard=EMPTY_KEYBOARD)
 
 
-@bot.on.message(CommandRule(",плыть", [",", f"{CLUBPREF} "], 0))
+@bot.on.message(CommandRule("плыть", [",", f"{CLUBPREF} "], 0))
 @bot.on.message(payload={"cmd": "sailed"})
 async def sailed_handler(message: Message):
     if message.from_id < 1:
@@ -138,7 +138,7 @@ async def top_handler(message: Message):
 async def kok_info_handler(_: Message):
     return (
         "Модуль плыть в боте ampersand"
-        "\nver.1.0.3, UNstable"
+        "\nver.1.0.31, UNstable"
         "\nrecreated from drink sim!!"
         "\nDerfikop❤️Rip(((,"
         "\n@F1zzTao❤️Alive :)"
