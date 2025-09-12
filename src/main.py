@@ -135,13 +135,14 @@ async def kok_info_handler(_: Message):
 
 @bot.on.message(CommandRule("помощь пить", [","], 0))
 @bot.on.message(payload={"cmd": "drink_help"})
-async def kok_help_handler(_: Message):
+async def kok_help_handler(message: Message):
     top_users_list = await top_drink_users()
     top_user = top_users_list[:1]
-    user_ids = [user[0] for user in top_user]
-    user_names = await api.users.get(user_ids=user_ids)
-    return "команды модуля пить:\nпить, пить инфо,\nпить топ, пить кружка"
-    return f"что нужно для счастья?Эээ... наверное нужно выпить спермы больше чем {best_player}"
+    user_id = [user[0] for user in top_user]
+    best_player = await message.ctx_api.users.get(user_ids=user_id)
+    best_player = best_player[0]
+    bp_full_name = f"{best_player.first_name} {best_player.last_name}"
+    return f"команды модуля пить:\nпить, пить инфо,\nпить топ, пить кружка\n\n\n\nфилософский вопрос : \nчто нужно для счастья?\nЭээ... наверное нужно выпить спермы\nбольше чем @id{best_player.id}({bp_full_name})"
 
 @bot.on.message(text=(",юникс тайм", "[club224599461|@ampersand_bot] юникс тайм"))
 @bot.on.message(payload={"cmd": "unix_time"})
