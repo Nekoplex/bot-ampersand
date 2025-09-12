@@ -31,7 +31,7 @@ async def handle_drink_command(user_id: int) -> str:
     current_date = int(time.time())
     user = await get_user(user_id)
 
-    drink: int = random.randint(200, 2000)
+    drink: int = random.randint(20, 100)
     total_drink = drink
     if user:
         if datetime.fromtimestamp(user[2]).date() == datetime.now().date():
@@ -98,7 +98,7 @@ async def remove_kbd_handler(message: Message):
 @bot.on.message(payload={"cmd": "drink"})
 async def drink_handler(message: Message):
     if message.from_id < 1:
-        # Bots not allowed!
+        # Боты идут НАХУЙ И НИХУЯ НЕ ПЬЮТ
         return
 
     response = await handle_drink_command(message.from_id)
@@ -128,15 +128,20 @@ async def kok_info_handler(_: Message):
         "\nver.1.0.0, stable"
         "\nDerfikop❤️,"
         "\nF1zzTao❤️"
-        "\nampersand gang 4ever🔫"
+        "\nЧатгпт за весь\nпредыдущий говнокодик"
+        "ampersand distribution ™"
     )
 
 
 @bot.on.message(CommandRule("помощь пить", [","], 0))
 @bot.on.message(payload={"cmd": "drink_help"})
 async def kok_help_handler(_: Message):
+    top_users_list = await top_drink_users()
+    top_user = top_users_list[:1]
+    user_ids = [user[0] for user in top_user]
+    user_names = await api.users.get(user_ids=user_ids)
     return "команды модуля пить:\nпить, пить инфо,\nпить топ, пить кружка"
-
+    return f"что нужно для счастья?Эээ... наверное нужно выпить спермы больше чем {best_player}"
 
 @bot.on.message(text=(",юникс тайм", "[club224599461|@ampersand_bot] юникс тайм"))
 @bot.on.message(payload={"cmd": "unix_time"})
