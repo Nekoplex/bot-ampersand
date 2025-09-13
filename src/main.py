@@ -129,7 +129,7 @@ async def kok_info_handler(_: Message):
         "\nDerfikop❤️,"
         "\nF1zzTao❤️"
         "\nЧатгпт за весь\nпредыдущий говнокодик"
-        "ampersand distribution ™"
+        "\nampersand distribution ™"
     )
 
 
