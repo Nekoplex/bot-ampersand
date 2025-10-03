@@ -23,7 +23,10 @@ bot = Bot(TOKEN)
 bot.labeler.vbml_ignore_case = True
 bot.labeler.auto_rules = [FromUserRule()]
 
-
+#TODO : Вернуть другие напитки, вернуть модуль Жрать, добавить ╔════════╗
+#..............................................................║ ачивки ║
+#..............................................................╚════════╝
+#........................................................................
 async def handle_drink_command(user_id: int) -> str:
     """
     Handles "пить" command.
@@ -43,7 +46,7 @@ async def handle_drink_command(user_id: int) -> str:
         await create_user(user_id, drink, current_date)
 
     return f"Вы выпили {drink} мл спермы. Всего вы выпили : {total_drink} мл спермы."
-
+    #рандомные напитки с разным шансом( в будущем )
 
 async def handle_count_command(user_id: int) -> str:
     """
@@ -128,8 +131,8 @@ async def kok_info_handler(_: Message):
         "\nver.1.0.0, stable"
         "\nDerfikop❤️,"
         "\nF1zzTao❤️"
-        "\nЧатгпт за весь\nпредыдущий говнокодик"
-        "\nampersand distribution ™"
+        "\nЧатгпт за весь\nпредыдущий говнокодик❤️"
+        "\nampersand distribution ©️"
     )
 
 
@@ -164,7 +167,7 @@ async def time_nonformat_handler(message: Message):
     nf_time = str(int(time.time()))
     await message.answer(f"Текущее неоотформатированное юникс время : {nf_time}")
     # TODO: Sticker below is not available (error 100)
-    # await message.answer(sticker_id=3130)
+    await message.answer(sticker_id=3130)
 
 
 @bot.on.message(CommandRule("помощь другое", [","], 0))
@@ -174,7 +177,7 @@ async def help_misc_handler(_: Message):
         "\nперечень команд модуля 'другое':"
         "\n•юникс тайм"
         "\n•клава"
-        "\n•калькулятор 🤔"
+        "\n•калькулятор"
     )
 
 
@@ -207,7 +210,7 @@ async def no_internet_error_handler(e: ClientConnectorError):
     The entire bot waits 15 seconds if there's no internet.
     """
     logger.warning(f"No internet connection: {e}")
-    time.sleep(15)  # ? Should this be replaced with asyncio.sleep()?
+    asyncio.sleep(30)  # ? Should this be replaced with asyncio.sleep()?
 
 
 if __name__ == "__main__":

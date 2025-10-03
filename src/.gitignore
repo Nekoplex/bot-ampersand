@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+restart_on_change.sh
 nohup.out
 # C extensions
 *.so
